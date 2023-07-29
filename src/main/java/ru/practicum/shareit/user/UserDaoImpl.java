@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    HashMap<Integer, User> storage = new HashMap<>();
+    private HashMap<Integer, User> storage = new HashMap<>();
 
-    int id = 1;
+    private int id = 1;
 
     @Override
     public User create(UserDto user) {
@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
     public User edit(int userId, UserDto user) {
         User newUser = new User(userId, user.getName() != null ? user.getName() : storage.get(userId).getName(),
                 user.getEmail() != null ? user.getEmail() : storage.get(userId).getEmail());
-            validateExistsEmail(newUser);
+        validateExistsEmail(newUser);
         storage.put(newUser.getId(), newUser);
         return newUser;
     }
@@ -64,5 +64,10 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean checkUser(int userId) {
+        return storage.containsKey(userId);
     }
 }
