@@ -18,7 +18,6 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     public Item create(ItemDto itemDto, User user) {
-        validate(itemDto);
         Item item = new Item(id, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(),
                 user, itemDto.getRequest());
         storage.put(id, item);
@@ -71,17 +70,5 @@ public class ItemDaoImpl implements ItemDao {
             }
         }
         return items;
-    }
-
-    private void validate(ItemDto itemDto) {
-        if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ItemException("Ошибка имени");
-        }
-        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ItemException("Ошибка описания");
-        }
-        if (itemDto.getAvailable() == null) {
-            throw new ItemException("Отсутствует статус");
-        }
     }
 }

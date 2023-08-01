@@ -17,7 +17,6 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User create(UserDto user) {
         User newUser = new User(id, user.getName(), user.getEmail());
-        validate(newUser);
         validateExistsEmail(newUser);
         storage.put(newUser.getId(), newUser);
         id++;
@@ -46,13 +45,6 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAll() {
         return new ArrayList<>(storage.values());
-    }
-
-    private void validate(User user) {
-        //проверка почты
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new UserException("Некорректный email");
-        }
     }
 
     private void validateExistsEmail(User user) {
