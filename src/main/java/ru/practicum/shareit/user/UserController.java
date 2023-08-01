@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +11,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/users")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public User createUser(@RequestBody UserDto user) {
@@ -41,19 +38,5 @@ public class UserController {
     @GetMapping
     public List<User> getAll() {
         return userService.getAllUsers();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleUserException(final UserException e) {
-        return Map.of("error", "Ошибка пользователя",
-                "message: ", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleEmailException(final EmailException e) {
-        return Map.of("error", "Такой email уже зарегистрирован",
-                "message: ", e.getMessage());
     }
 }

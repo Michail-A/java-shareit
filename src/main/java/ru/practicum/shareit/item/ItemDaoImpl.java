@@ -65,8 +65,8 @@ public class ItemDaoImpl implements ItemDao {
     public List<Item> search(String text) {
         List<Item> items = new ArrayList<>();
         for (Item item : storage.values()) {
-            if (item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                    item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.isAvailable()) {
+            if ((item.getName().toLowerCase().contains(text.toLowerCase()) ||
+                    item.getDescription().toLowerCase().contains(text.toLowerCase())) && item.isAvailable()) {
                 items.add(item);
             }
         }
