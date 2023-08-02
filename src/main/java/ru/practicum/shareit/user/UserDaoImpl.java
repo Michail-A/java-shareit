@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.exception.EmailException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

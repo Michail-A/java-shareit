@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.NotFoundUserException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -14,12 +15,12 @@ import java.util.Map;
 public class ItemDaoImpl implements ItemDao {
 
     private Map<Integer, Item> storage = new HashMap<>();
-    int id = 1;
+    private int id = 1;
 
     @Override
     public Item create(ItemDto itemDto, User user) {
         Item item = new Item(id, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(),
-                user, itemDto.getRequest());
+                user, null);
         storage.put(id, item);
         id++;
         return item;
