@@ -14,7 +14,7 @@ public class ItemErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFoundUserException(final NotFoundUserException e) {
+    public Map<String, String> handleNotFoundUserException(final NotFoundException e) {
         log.error("Ошибка: " + e.getMessage());
         return Map.of("error", "Ошибка пользователя",
                 "message: ", e.getMessage());

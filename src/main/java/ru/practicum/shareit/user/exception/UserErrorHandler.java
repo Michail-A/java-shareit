@@ -27,4 +27,12 @@ public class UserErrorHandler {
         return Map.of("error", "Такой email уже зарегистрирован",
                 "message: ", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFoundUserException(final UserNotFoundException e){
+        log.error("Ошибка " + e.getMessage());
+        return Map.of("error", "Пользователь не найден",
+                "message: ", e.getMessage());
+    }
 }
