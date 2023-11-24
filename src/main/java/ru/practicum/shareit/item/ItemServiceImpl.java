@@ -100,8 +100,10 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
         List<ItemDtoGet> itemsWithBookings = new ArrayList<>();
         for (Item item : items) {
+
             List<Booking> bookings = bookingRepository.findByItemIdOrderByIdDesc(item.getId());
-            Booking nextBooking = bookings
+
+            Booking lastBooking = bookings
                     .stream()
                     .sorted(orderByStartDesc)
                     .filter(t -> t.getStart().isBefore(current) &&
@@ -109,13 +111,14 @@ public class ItemServiceImpl implements ItemService {
                     .findFirst()
                     .orElse(null);
 
-            Booking lastBooking = bookings
+            Booking nextBooking = bookings
                     .stream()
                     .sorted(orderByStartAsc)
                     .filter(t -> t.getStart().isAfter(current) &&
                             t.getStatus().equals(Status.APPROVED))
                     .findFirst()
                     .orElse(null);
+
             itemsWithBookings.add(ItemMapper.mapToGetItemDtoBooking(item,
                     BookingMapper.mapToItemBookingDtoGet(lastBooking),
                     BookingMapper.mapToItemBookingDtoGet(nextBooking)));
