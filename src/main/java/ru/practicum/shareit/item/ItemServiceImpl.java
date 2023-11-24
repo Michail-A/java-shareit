@@ -3,6 +3,12 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.exception.UserNotFoundException;
+import ru.practicum.shareit.item.dto.ItemDtoGet;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.exception.NotFoundException;
@@ -10,6 +16,9 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -17,6 +26,8 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+
+    private final BookingRepository bookingRepository;
 
     @Transactional
     @Override
@@ -49,13 +60,68 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item get(int itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
+    public ItemDtoGet get(int itemId, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Пользователь не найден"));
+
+         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
+         LocalDateTime current = LocalDateTime.now();
+         ItemDtoGet itemDtoGet = ItemMapper.mapToGetItemDtoBooking(item, null, null);
+         if(item.getOwner().getId() == userId){
+             List<Booking> bookings = bookingRepository.findByItemIdOrderByIdDesc(item.getId());
+             Booking lastBooking = bookings
+                     .stream()
+                     .sorted(orderByStartDesc)
+                     .filter(t -> t.getStart().isBefore(current) &&
+                             t.getStatus().equals(Status.APPROVED))
+                     .findFirst()
+                     .orElse(null);
+
+             Booking nextBooking = bookings
+                     .stream()
+                     .sorted(orderByStartAsc)
+                     .filter(t -> t.getStart().isAfter(current) &&
+                             t.getStatus().equals(Status.APPROVED))
+                     .findFirst()
+                     .orElse(null);
+
+             itemDtoGet.setLastBooking(BookingMapper.mapToItemBookingDtoGet(lastBooking));
+             itemDtoGet.setNextBooking(BookingMapper.mapToItemBookingDtoGet(nextBooking));
+         }
+         return itemDtoGet;
     }
 
     @Override
-    public List<Item> getByUser(int userId) {
-        return itemRepository.findAllByOwnerId(userId);
+    public List<ItemDtoGet> getByUser(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Пользователь не найден"));
+
+        LocalDateTime current = LocalDateTime.now();
+        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<ItemDtoGet> itemsWithBookings = new ArrayList<>();
+        for (Item item : items) {
+            List<Booking> bookings = bookingRepository.findByItemIdOrderByIdDesc(item.getId());
+            Booking nextBooking = bookings
+                    .stream()
+                    .sorted(orderByStartDesc)
+                    .filter(t -> t.getStart().isBefore(current) &&
+                            t.getStatus().equals(Status.APPROVED))
+                    .findFirst()
+                    .orElse(null);
+
+            Booking lastBooking = bookings
+                    .stream()
+                    .sorted(orderByStartAsc)
+                    .filter(t -> t.getStart().isAfter(current) &&
+                            t.getStatus().equals(Status.APPROVED))
+                    .findFirst()
+                    .orElse(null);
+            itemsWithBookings.add(ItemMapper.mapToGetItemDtoBooking(item,
+                    BookingMapper.mapToItemBookingDtoGet(lastBooking),
+                    BookingMapper.mapToItemBookingDtoGet(nextBooking)));
+        }
+
+        return itemsWithBookings;
     }
 
     @Override
@@ -66,4 +132,24 @@ public class ItemServiceImpl implements ItemService {
             return itemRepository.findItemsByText(text);
         }
     }
+
+    public static final Comparator<Booking> orderByStartDesc = (a, b) -> {
+        if (a.getStart().isAfter(b.getStart())) {
+            return -1;
+        } else if (a.getStart().isBefore(b.getStart())) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+
+    public static final Comparator<Booking> orderByStartAsc = (a, b) -> {
+        if (a.getStart().isAfter(b.getStart())) {
+            return 1;
+        } else if (a.getStart().isBefore(b.getStart())) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
 }

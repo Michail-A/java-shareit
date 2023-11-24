@@ -60,4 +60,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "inner join User u on i.owner.id = u.id where u.id = ?1 and b.status = ?2 " +
             "order by b.start desc")
     List<Booking> findByOwnerRejected(int userId, Status status);
+
+    List<Booking> findByItemIdOrderByIdDesc(int itemId);
 }

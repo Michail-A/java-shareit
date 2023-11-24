@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.item.dto.ItemDtoGet;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -10,9 +11,9 @@ public interface ItemService {
 
     Item update(ItemDto itemDto, int userId, int itemId);
 
-    Item get(int itemId);
+    ItemDtoGet get(int itemId, int userId);
 
-    List<Item> getByUser(int userId);
+    List<ItemDtoGet> getByUser(int userId);
 
     List<Item> search(String text);
 }

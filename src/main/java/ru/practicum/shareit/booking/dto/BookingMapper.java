@@ -28,4 +28,13 @@ public class BookingMapper {
         bookingDtoForApprove.setItem(ItemMapper.mapToBookingItemDto(booking.getItem()));
         return bookingDtoForApprove;
     }
+
+    public static ItemBookingDtoGet mapToItemBookingDtoGet(Booking booking){
+        ItemBookingDtoGet itemBookingDtoGet = new ItemBookingDtoGet();
+        if(booking != null){
+            itemBookingDtoGet.setId(booking.getId());
+            itemBookingDtoGet.setBookerId(booking.getBooker().getId());
+        }
+        return itemBookingDtoGet;
+    }
 }
