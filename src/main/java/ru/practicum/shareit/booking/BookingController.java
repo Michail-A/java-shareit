@@ -27,19 +27,19 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDtoGet getForOwnerOrBooker(@PathVariable int bookingId, @RequestHeader(id) int userId){
+    public BookingDtoGet getForOwnerOrBooker(@PathVariable int bookingId, @RequestHeader(id) int userId) {
         return bookingService.getForOwnerOrBooker(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDtoGet> getForUser(@RequestHeader(id) int userId,
-                                          @RequestParam(defaultValue = "ALL") String state){
-         return bookingService.getForUser(state, userId);
+                                          @RequestParam(defaultValue = "ALL") String state) {
+        return bookingService.getForUser(state, userId);
     }
 
-   @GetMapping("/owner")
+    @GetMapping("/owner")
     public List<BookingDtoGet> getBookingsForOwner(@RequestHeader(id) int userId,
-                                                   @RequestParam(defaultValue = "ALL") String state){
+                                                   @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.getBookingsForOwner(state, userId);
     }
 }

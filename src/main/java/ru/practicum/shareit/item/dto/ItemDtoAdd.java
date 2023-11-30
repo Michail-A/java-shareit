@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
-public class ItemDto {
+public class ItemDtoAdd {
     @NotBlank
     private String name;
     @NotBlank

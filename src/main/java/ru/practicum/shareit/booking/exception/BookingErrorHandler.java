@@ -16,7 +16,7 @@ public class BookingErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleItemIsNotAvailableException(final RuntimeException e) {
         log.error("Ошибка: " + e.getMessage());
-        return Map.of("error", "Ошибка вещи",
+        return Map.of("error", e.getMessage(),
                 "message: ", e.getMessage());
     }
 
@@ -38,9 +38,9 @@ public class BookingErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleUnknownStateException (final UnknowStateException e){
+    public Map<String, String> handleUnknownStateException(final UnknowStateException e) {
         log.error("Ошибка: " + e.getMessage());
         return Map.of("error", e.getMessage());
     }
-    }
+}
 

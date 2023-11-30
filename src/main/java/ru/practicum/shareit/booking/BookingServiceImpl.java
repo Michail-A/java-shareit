@@ -81,10 +81,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoGet getForOwnerOrBooker(int bookingId, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Пользователь не найден"));
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 () -> new NotFoundBookingException("Бронирование id=" + bookingId + " не найдено"));
+
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
-            throw new ItemIsNotAvailableException("Ошибка доступа. Бронирование может посмотреть только владелец" +
+            throw new NotFoundBookingException("Ошибка доступа. Бронирование может посмотреть только владелец" +
                     " вещи или создатель");
         }
         return BookingMapper.mapToApprove(booking);

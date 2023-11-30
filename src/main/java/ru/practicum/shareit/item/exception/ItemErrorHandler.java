@@ -19,4 +19,12 @@ public class ItemErrorHandler {
         return Map.of("error", "Ошибка пользователя",
                 "message: ", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleCommentAccessError(final CommentAccessError e) {
+        log.error("Ошибка: " + e.getMessage());
+        return Map.of("error", "Ошибка доступа",
+                "message: ", e.getMessage());
+    }
 }
