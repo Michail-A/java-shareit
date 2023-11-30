@@ -20,17 +20,17 @@ public class ItemMapper {
         return item;
     }
 
-    public static BookingItemDto mapToBookingItemDto(Item item){
+    public static BookingItemDto mapToBookingItemDto(Item item) {
         return new BookingItemDto(item.getId(), item.getName());
     }
 
     public static ItemDtoGet mapToGetItemDtoBooking(Item item, ItemBookingDtoGet lastBooking,
-                                                    ItemBookingDtoGet nextBooking, List<CommentDtoGet> comments){
+                                                    ItemBookingDtoGet nextBooking, List<CommentDtoGet> comments) {
         return new ItemDtoGet(item.getId(), item.getName(), item.getDescription(),
                 item.isAvailable(), lastBooking, nextBooking, comments);
     }
 
-    public static Comment mapToNewComment(CommentDtoAdd commentDtoAdd, Item item, User author){
+    public static Comment mapToNewComment(CommentDtoAdd commentDtoAdd, Item item, User author) {
         LocalDateTime created = LocalDateTime.now();
         Comment comment = new Comment();
         comment.setText(commentDtoAdd.getText());
@@ -40,7 +40,7 @@ public class ItemMapper {
         return comment;
     }
 
-    public static CommentDtoGet mapToCommentDtoGet(Comment comment){
+    public static CommentDtoGet mapToCommentDtoGet(Comment comment) {
         return new CommentDtoGet(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
     }
 }

@@ -14,7 +14,7 @@ public class UserMapper {
         return user;
     }
 
-    public static BookingUserDto mapToBookingUserDto(User user){
+    public static BookingUserDto mapToBookingUserDto(User user) {
         return new BookingUserDto(user.getId());
     }
 }

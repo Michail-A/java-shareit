@@ -29,15 +29,15 @@ public class UserServiceImpl implements UserService {
     public User edit(int id, UserDto userDto) {
         User newUser = userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("Пользователь id= " + id + " не найден."));
-        if(userDto.getName() != null && !userDto.getName().isBlank()){
+        if (userDto.getName() != null && !userDto.getName().isBlank()) {
             newUser.setName(userDto.getName());
         }
-        if(userDto.getEmail() != null && !userDto.getEmail().isBlank()){
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
             newUser.setEmail(userDto.getEmail());
         }
         try {
             return userRepository.save(newUser);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new EmailException("Такой mail уже есть");
         }
     }
