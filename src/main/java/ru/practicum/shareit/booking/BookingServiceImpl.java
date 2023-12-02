@@ -48,8 +48,19 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Нельзя забронировать свою вещь");
         }
 
-        Booking booking = BookingMapper.mapToNewBooking(bookingDto, user, item);
+        //Проверка на доступность дат бронирования
+        List<Booking> bookings = bookingRepository.findByItemIdOrderByIdDesc(item.getId());
+        for (Booking booking : bookings) {
+            if ((booking.getStart().isAfter(bookingDto.getStart()) && booking.getStart().isBefore(bookingDto.getEnd())) ||
+                    (booking.getEnd().isAfter(bookingDto.getStart()) && booking.getEnd().isBefore(bookingDto.getEnd())) ||
+                    (bookingDto.getStart().isAfter(booking.getStart()) && bookingDto.getEnd().isBefore(booking.getEnd())) ||
+                    (bookingDto.getStart().isBefore(booking.getStart()) && bookingDto.getEnd().isAfter(booking.getEnd()))) {
+                throw new ItemIsNotAvailableException("Даты бронирования заняты");
+            }
+        }
 
+
+        Booking booking = BookingMapper.mapToNewBooking(bookingDto, user, item);
         return bookingRepository.save(booking);
     }
 
@@ -66,8 +77,8 @@ public class BookingServiceImpl implements BookingService {
         Status status;
 
         if (approve) {
-            if (booking.getStatus().equals(Status.APPROVED)) {
-                throw new ItemIsNotAvailableException("Бронирование уже подтверждено");
+            if (booking.getStatus().equals(Status.APPROVED) || booking.getStatus().equals(Status.REJECTED)) {
+                throw new ItemIsNotAvailableException("Бронирование уже подтверждено или отклонено");
             }
             status = Status.APPROVED;
         } else {
@@ -98,12 +109,7 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден"));
 
-        State state = null;
-        try {
-            state = State.valueOf(stateText.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new UnknowStateException("Unknown state: " + stateText.toUpperCase());
-        }
+        State state = State.mapFromText(stateText);
 
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookings;
@@ -142,12 +148,7 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден"));
 
-        State state = null;
-        try {
-            state = State.valueOf(stateText.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new UnknowStateException("Unknown state: " + stateText.toUpperCase());
-        }
+        State state = State.mapFromText(stateText);
 
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookings;
