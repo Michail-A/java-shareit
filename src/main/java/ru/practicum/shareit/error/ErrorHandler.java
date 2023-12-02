@@ -14,7 +14,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleErrorNotFound (final RuntimeException e) {
+    public Map<String, String> handleErrorNotFound(final RuntimeException e) {
         log.error("Ошибка: " + e.getMessage());
         return Map.of("error", e.getMessage());
     }

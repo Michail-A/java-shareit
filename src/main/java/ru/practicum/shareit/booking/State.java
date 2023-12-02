@@ -12,9 +12,7 @@ public enum State {
 
     public static State mapFromText(String stateText) {
         try {
-            State state = null;
-            state = State.valueOf(stateText.toUpperCase());
-            return state;
+            return State.valueOf(stateText.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new UnknowStateException("Unknown state: " + stateText.toUpperCase());
         }

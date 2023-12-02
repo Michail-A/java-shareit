@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.error.EmailException;
 import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.error.EmailException;
 
 import java.util.List;
 
@@ -20,8 +20,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(UserDto userDto) {
-        User user = userRepository.save(UserMapper.mapToNewUser(userDto));
-        return user;
+        return userRepository.save(UserMapper.mapToNewUser(userDto));
     }
 
     @Override

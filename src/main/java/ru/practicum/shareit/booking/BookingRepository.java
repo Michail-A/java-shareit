@@ -53,4 +53,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByOwnerRejected(int userId, Status status);
 
     List<Booking> findByItemIdOrderByIdDesc(int itemId);
+
 }

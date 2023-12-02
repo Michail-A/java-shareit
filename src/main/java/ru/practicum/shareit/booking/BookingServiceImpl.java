@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoGet getForOwnerOrBooker(int bookingId, int userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+        userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 () -> new NotFoundException("Бронирование id=" + bookingId + " не найдено"));
@@ -107,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoGet> getForUser(String stateText, int userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+        userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 
         State state = State.mapFromText(stateText);
@@ -146,7 +146,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoGet> getBookingsForOwner(String stateText, int userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+        userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 
         State state = State.mapFromText(stateText);
