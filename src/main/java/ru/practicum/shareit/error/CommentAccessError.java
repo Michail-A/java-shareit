@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.exception;
+package ru.practicum.shareit.error;
 
 public class CommentAccessError extends RuntimeException {
     public CommentAccessError(String message) {

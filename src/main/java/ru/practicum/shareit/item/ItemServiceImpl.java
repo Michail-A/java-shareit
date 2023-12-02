@@ -7,14 +7,13 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.exception.CommentAccessError;
-import ru.practicum.shareit.item.exception.NotFoundException;
+import ru.practicum.shareit.error.CommentAccessError;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDtoGet get(int itemId, int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
         LocalDateTime current = LocalDateTime.now();
@@ -121,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDtoGet> getByUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
 
         LocalDateTime current = LocalDateTime.now();
         List<Item> items = itemRepository.findAllByOwnerId(userId);

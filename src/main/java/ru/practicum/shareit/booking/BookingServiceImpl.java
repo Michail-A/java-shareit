@@ -7,12 +7,11 @@ import ru.practicum.shareit.booking.dto.BookingDtoGet;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.error.DateException;
 import ru.practicum.shareit.error.ItemIsNotAvailableException;
+import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -31,7 +30,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking create(BookingDto bookingDto, int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
 
         if (bookingDto.getEnd().isBefore(bookingDto.getStart()) ||
                 bookingDto.getEnd().isEqual(bookingDto.getStart())) {
@@ -95,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDtoGet getForOwnerOrBooker(int bookingId, int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 () -> new NotFoundException("Бронирование id=" + bookingId + " не найдено"));
 
@@ -109,7 +108,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoGet> getForUser(String stateText, int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
 
         State state = State.mapFromText(stateText);
 
@@ -148,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoGet> getBookingsForOwner(String stateText, int userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден"));
+                () -> new NotFoundException("Пользователь не найден"));
 
         State state = State.mapFromText(stateText);
 

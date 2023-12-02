@@ -20,9 +20,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({ItemIsNotAvailableException.class, DateException.class,
-            UnknowStateException.class, DateException.class})
+            UnknowStateException.class, DateException.class, UserException.class, CommentAccessError.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleErrorBadRequest(final RuntimeException e) {
+        log.error("Ошибка: " + e.getMessage());
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler({EmailException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleErrorConflict(final RuntimeException e) {
         log.error("Ошибка: " + e.getMessage());
         return Map.of("error", e.getMessage());
     }

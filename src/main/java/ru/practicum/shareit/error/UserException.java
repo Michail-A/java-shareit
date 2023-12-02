@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.exception;
+package ru.practicum.shareit.error;
 
 public class UserException extends RuntimeException {
     public UserException(String message) {
