@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoGet;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.exception.*;
+import ru.practicum.shareit.error.DateException;
+import ru.practicum.shareit.error.ItemIsNotAvailableException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -67,10 +69,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDtoGet setApprove(int userId, int bookingId, Boolean approve) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
-                () -> new NotFoundBookingException("Бронирование id=" + bookingId + " не найдено"));
+                () -> new NotFoundException("Бронирование id=" + bookingId + " не найдено"));
 
         if (booking.getItem().getOwner().getId() != userId) {
-            throw new NotFoundBookingException("Бронирование пользователя id = " + booking.getItem().getOwner().getId()
+            throw new NotFoundException("Бронирование пользователя id = " + booking.getItem().getOwner().getId()
                     + "не найдено");
         }
 
@@ -95,10 +97,10 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден"));
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
-                () -> new NotFoundBookingException("Бронирование id=" + bookingId + " не найдено"));
+                () -> new NotFoundException("Бронирование id=" + bookingId + " не найдено"));
 
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
-            throw new NotFoundBookingException("Ошибка доступа. Бронирование может посмотреть только владелец" +
+            throw new NotFoundException("Ошибка доступа. Бронирование может посмотреть только владелец" +
                     " вещи или создатель");
         }
         return BookingMapper.mapToApprove(booking);

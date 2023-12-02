@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import ru.practicum.shareit.booking.exception.UnknowStateException;
+import ru.practicum.shareit.error.UnknowStateException;
 
 public enum State {
     ALL,

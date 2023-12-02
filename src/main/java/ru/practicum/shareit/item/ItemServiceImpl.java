@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.exception.CommentAccessError;
 import ru.practicum.shareit.item.exception.NotFoundException;
@@ -15,6 +14,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
