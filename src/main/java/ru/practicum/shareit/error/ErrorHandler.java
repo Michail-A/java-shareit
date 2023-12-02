@@ -20,7 +20,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({ItemIsNotAvailableException.class, DateException.class,
-            UnknowStateException.class, DateException.class, UserException.class, CommentAccessError.class})
+            UnknowStateException.class, DateException.class, CommentAccessError.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleErrorBadRequest(final RuntimeException e) {
         log.error("Ошибка: " + e.getMessage());
