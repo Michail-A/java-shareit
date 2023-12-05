@@ -1,29 +1,25 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.item.model;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "bookings", schema = "public")
+@Table(name = "comments", schema = "public")
 @Getter
 @Setter
 @ToString
-public class Booking {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "start_date", nullable = false)
-    private LocalDateTime start;
-
-    @Column(name = "end_date", nullable = false)
-    private LocalDateTime end;
+    @Column(name = "text", nullable = false)
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -31,8 +27,8 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private User booker;
+    private User author;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created;
 }

@@ -1,8 +1,13 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.error.EmailException;
+import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.List;
 
@@ -10,30 +15,46 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
     @Override
-    public User create(UserDto user) {
-        return userDao.create(user);
+    @Transactional
+    public User create(UserDto userDto) {
+        return userRepository.save(UserMapper.mapToNewUser(userDto));
     }
 
     @Override
-    public User edit(int id, UserDto user) {
-        return userDao.edit(id, user);
+    @Transactional
+    public User edit(int id, UserDto userDto) {
+        User newUser = userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("Пользователь id= " + id + " не найден."));
+        if (userDto.getName() != null && !userDto.getName().isBlank()) {
+            newUser.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
+            newUser.setEmail(userDto.getEmail());
+        }
+        try {
+            return userRepository.save(newUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new EmailException("Такой mail уже есть");
+        }
     }
 
     @Override
     public User get(int id) {
-        return userDao.getUser(id);
+        return userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Пользователь не найден"));
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userDao.getAll();
+        return userRepository.findAll();
     }
 
     @Override
     public void delete(int id) {
-        userDao.delete(id);
+        userRepository.deleteById(id);
     }
+
 }
