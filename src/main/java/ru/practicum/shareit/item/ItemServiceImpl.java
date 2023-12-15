@@ -12,6 +12,8 @@ import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.Request;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -29,6 +31,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public CommentDtoGet addComment(int itemId, int userId, CommentDtoAdd commentDtoAdd) {
@@ -48,10 +51,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Item create(ItemDtoAdd itemDto, int userId) {
+    public ItemDtoGet create(ItemDtoAdd itemDto, int userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь id= " + userId + " не найден."));
-        return itemRepository.save(ItemMapper.mapToNewItem(itemDto, user));
+        Item item = ItemMapper.mapToNewItem(itemDto, user);
+        if(itemDto.getRequestId() != null) {
+            Request request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new NotFoundException("Запрос id= " + itemDto.getRequestId() + " не найден."));
+            item.setRequest(request);
+        }
+
+        return ItemMapper.mapToGetItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -102,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoGet> getByUser(int userId) {
+    public List<ItemDtoGet> getByUser(int userId, int from, int size) {
         userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 

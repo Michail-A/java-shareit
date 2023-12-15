@@ -14,4 +14,5 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
 
     Page<Request> findByRequesterIdNotOrderByCreatedDesc(int requesterId, Pageable pageable);
 
+
 }

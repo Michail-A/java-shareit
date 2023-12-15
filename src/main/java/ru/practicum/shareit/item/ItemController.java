@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDtoGet;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -20,7 +22,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public Item create(@Valid @RequestBody ItemDtoAdd itemDto, @RequestHeader(id) int userId) {
+    public ItemDtoGet create(@Valid @RequestBody ItemDtoAdd itemDto, @RequestHeader(id) int userId) {
         return itemService.create(itemDto, userId);
     }
 
@@ -36,8 +38,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoGet> getByUser(@RequestHeader(id) int userId) {
-        return itemService.getByUser(userId);
+    public List<ItemDtoGet> getByUser(@RequestHeader(id) int userId,
+                                      @RequestParam(defaultValue = "0") @Min(0) int from,
+                                      @RequestParam(defaultValue = "20") @Min(1) @Max(20) int size) {
+        return itemService.getByUser(userId, from, size);
     }
 
     @GetMapping("/search")

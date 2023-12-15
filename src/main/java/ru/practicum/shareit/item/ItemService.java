@@ -9,13 +9,13 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemService {
-    Item create(ItemDtoAdd itemDto, int userId);
+    ItemDtoGet create(ItemDtoAdd itemDto, int userId);
 
     Item update(ItemDtoAdd itemDto, int userId, int itemId);
 
     ItemDtoGet get(int itemId, int userId);
 
-    List<ItemDtoGet> getByUser(int userId);
+    List<ItemDtoGet> getByUser(int userId, int from, int size);
 
     List<Item> search(String text);
 
