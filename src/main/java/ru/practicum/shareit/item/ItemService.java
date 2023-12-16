@@ -17,7 +17,7 @@ public interface ItemService {
 
     List<ItemDtoGet> getByUser(int userId, int from, int size);
 
-    List<Item> search(String text);
+    List<Item> search(String text, int from, int size);
 
     CommentDtoGet addComment(int itemId, int userId, CommentDtoAdd commentDtoAdd);
 }

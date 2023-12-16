@@ -6,6 +6,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoGet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -33,13 +35,17 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoGet> getForUser(@RequestHeader(id) int userId,
-                                          @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getForUser(state, userId);
+                                          @RequestParam(defaultValue = "ALL") String state,
+                                          @RequestParam(defaultValue = "0") @Min(0) int from,
+                                          @RequestParam(defaultValue = "20") @Min(1) @Max(20) int size) {
+        return bookingService.getForUser(state, userId, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoGet> getBookingsForOwner(@RequestHeader(id) int userId,
-                                                   @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getBookingsForOwner(state, userId);
+                                                   @RequestParam(defaultValue = "ALL") String state,
+                                                   @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                   @RequestParam(defaultValue = "20") @Min(1) @Max(20) int size) {
+        return bookingService.getBookingsForOwner(state, userId, from, size);
     }
 }

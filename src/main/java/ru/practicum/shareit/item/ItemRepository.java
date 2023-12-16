@@ -16,7 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
             "WHERE item.available = TRUE " +
             "AND (UPPER(item.name) LIKE UPPER(CONCAT('%', :text, '%')) " +
             "OR UPPER(item.description) LIKE UPPER(CONCAT('%', :text, '%')))")
-    List<Item> findItemsByText(@Param("text") String text);
+    Page<Item> findItemsByText(@Param("text") String text, Pageable pageable);
 
     @Query(value = "select i from Item i where i.request.requester.id = ?1 " +
             "order by i.id desc")

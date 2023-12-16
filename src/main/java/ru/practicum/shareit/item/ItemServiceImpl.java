@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -116,9 +119,9 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<Item> items = itemRepository.findAllByOwnerId(userId, PageRequest.of(from, size)).getContent();
         List<ItemDtoGet> itemsWithBookings = new ArrayList<>();
-        List<Booking> bookings = bookingRepository.findByOwnerAll(userId);
+        List<Booking> bookings = bookingRepository.findByOwnerAll(userId, PageRequest.of(0, 1000)).getContent();
         List<Comment> comments = commentRepository.findByOwnerId(userId);
 
         for (Item item : items) {
@@ -143,11 +146,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> search(String text) {
+    public List<Item> search(String text, int from, int size) {
         if (text.isBlank()) {
             return List.of();
         } else {
-            return itemRepository.findItemsByText(text);
+            return itemRepository.findItemsByText(text, PageRequest.of(from, size)).getContent();
         }
     }
 
