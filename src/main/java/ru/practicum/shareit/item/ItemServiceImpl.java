@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -58,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь id= " + userId + " не найден."));
         Item item = ItemMapper.mapToNewItem(itemDto, user);
-        if(itemDto.getRequestId() != null) {
+        if (itemDto.getRequestId() != null) {
             Request request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
                     new NotFoundException("Запрос id= " + itemDto.getRequestId() + " не найден."));
             item.setRequest(request);
@@ -72,7 +70,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь id= " + userId + " не найден."));
-        item.setOwner(user);
         if (!item.getOwner().equals(user)) {
             throw new NotFoundException("У пользователя нет такой вещи");
         }
@@ -154,7 +151,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    public static final Comparator<Booking> orderByStartDesc = (a, b) -> {
+    private static final Comparator<Booking> orderByStartDesc = (a, b) -> {
         if (a.getStart().isAfter(b.getStart())) {
             return -1;
         } else if (a.getStart().isBefore(b.getStart())) {
@@ -164,7 +161,7 @@ public class ItemServiceImpl implements ItemService {
         }
     };
 
-    public static final Comparator<Booking> orderByStartAsc = (a, b) -> {
+    private static final Comparator<Booking> orderByStartAsc = (a, b) -> {
         if (a.getStart().isAfter(b.getStart())) {
             return 1;
         } else if (a.getStart().isBefore(b.getStart())) {

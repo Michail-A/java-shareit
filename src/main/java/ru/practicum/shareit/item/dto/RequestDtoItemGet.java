@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class RequestDtoItemGet {
-        private int id;
-        private String name;
-        private String description;
-        private int requestId;
-        private Boolean available;
+    private int id;
+    private String name;
+    private String description;
+    private int requestId;
+    private Boolean available;
 }

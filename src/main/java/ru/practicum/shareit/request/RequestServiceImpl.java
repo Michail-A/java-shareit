@@ -86,9 +86,9 @@ public class RequestServiceImpl implements RequestService {
             if (!items.isEmpty()) {
                 itemsForRequest
                         .addAll(items.stream()
-                        .filter(item -> item.getRequest() !=null && item.getRequest().equals(request))
-                        .map(ItemMapper::mapToRequestDtoItemGet)
-                         .collect(Collectors.toList()));
+                                .filter(item -> item.getRequest() != null && item.getRequest().equals(request))
+                                .map(ItemMapper::mapToRequestDtoItemGet)
+                                .collect(Collectors.toList()));
             }
             GetRequestDto getRequest = RequestMapper.mapToGetRequestDto(request);
             getRequest.setItems(itemsForRequest);

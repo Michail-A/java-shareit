@@ -1,12 +1,10 @@
 package ru.practicum.shareit.request.dto;
 
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RequestMapper {
 
@@ -18,7 +16,7 @@ public class RequestMapper {
         return request;
     }
 
-    public static GetRequestDto mapToGetRequestDto(Request request){
+    public static GetRequestDto mapToGetRequestDto(Request request) {
         GetRequestDto getRequestDto = new GetRequestDto();
         getRequestDto.setId(request.getId());
         getRequestDto.setDescription(request.getDescription());
