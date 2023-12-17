@@ -66,7 +66,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item update(ItemDtoAdd itemDto, int userId, int itemId) {
+    public ItemDtoGet update(ItemDtoAdd itemDto, int userId, int itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь id= " + userId + " не найден."));
@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return itemRepository.saveAndFlush(item);
+        return ItemMapper.mapToGetItemDto(itemRepository.saveAndFlush(item));
     }
 
     @Override
@@ -143,11 +143,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> search(String text, int from, int size) {
+    public List<ItemDtoGet> search(String text, int from, int size) {
         if (text.isBlank()) {
             return List.of();
         } else {
-            return itemRepository.findItemsByText(text, PageRequest.of(from, size)).getContent();
+            List<Item> items = itemRepository.findItemsByText(text, PageRequest.of(from, size)).getContent();
+            return items.stream().map(ItemMapper::mapToGetItemDto).collect(Collectors.toList());
         }
     }
 

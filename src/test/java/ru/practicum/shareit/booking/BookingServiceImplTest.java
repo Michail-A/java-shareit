@@ -267,26 +267,10 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getForUserFailPage() {
-        when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
-
-        final DateException e = assertThrows(DateException.class,
-                () -> bookingService.getForUser("All", user.getId(), -10, -20));
-    }
-
-    @Test
     void getBookingsForOwnerUserFailUserNotFound() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         final NotFoundException e = assertThrows(NotFoundException.class,
                 () -> bookingService.getBookingsForOwner("All", user.getId(), 0, 10));
-    }
-
-    @Test
-    void getBookingsForOwnerFailPage() {
-        when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
-
-        final DateException e = assertThrows(DateException.class,
-                () -> bookingService.getBookingsForOwner("All", user.getId(), -10, -20));
     }
 }

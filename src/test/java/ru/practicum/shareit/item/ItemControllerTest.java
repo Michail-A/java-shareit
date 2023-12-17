@@ -9,10 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.practicum.shareit.item.dto.CommentDtoAdd;
-import ru.practicum.shareit.item.dto.CommentDtoGet;
-import ru.practicum.shareit.item.dto.ItemDtoAdd;
-import ru.practicum.shareit.item.dto.ItemDtoGet;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -83,7 +80,7 @@ class ItemControllerTest {
         item.setAvailable(itemDtoGet.getAvailable());
 
 
-        when(itemService.update(any(ItemDtoAdd.class), anyInt(), anyInt())).thenReturn(item);
+        when(itemService.update(any(ItemDtoAdd.class), anyInt(), anyInt())).thenReturn(ItemMapper.mapToGetItemDto(item));
 
         mockMvc.perform(patch("/items/1")
                         .header("X-Sharer-User-Id", 1)
@@ -138,7 +135,7 @@ class ItemControllerTest {
         item.setName(itemDtoGet.getName());
         item.setDescription(itemDtoGet.getDescription());
         item.setAvailable(itemDtoGet.getAvailable());
-        when(itemService.search(anyString(), anyInt(), anyInt())).thenReturn(List.of(item));
+        when(itemService.search(anyString(), anyInt(), anyInt())).thenReturn(List.of(ItemMapper.mapToGetItemDto(item)));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/items/search?text=test")
                         .characterEncoding(StandardCharsets.UTF_8)

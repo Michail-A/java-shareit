@@ -183,9 +183,9 @@ class ItemServiceImplTest {
         updateItem.setOwner(item.getOwner());
         when(itemRepository.saveAndFlush(any(Item.class))).thenReturn(updateItem);
 
-        Item newItem = itemService.update(itemDtoAdd, user.getId(), item.getId());
+        ItemDtoGet newItem = itemService.update(itemDtoAdd, user.getId(), item.getId());
 
-        assertEquals(newItem, updateItem);
+        assertEquals(newItem, ItemMapper.mapToGetItemDto(updateItem));
         verify(itemRepository).saveAndFlush(any(Item.class));
     }
 
@@ -258,7 +258,7 @@ class ItemServiceImplTest {
         Page<Item> items = new PageImpl<>(List.of(item));
         when(itemRepository.findItemsByText(any(), any(Pageable.class))).thenReturn(items);
 
-        List<Item> getSearch = itemService.search("Test", 0, 10);
+        List<ItemDtoGet> getSearch = itemService.search("Test", 0, 10);
         assertEquals(getSearch.get(0).getName(), items.getContent().get(0).getName());
     }
 
@@ -310,7 +310,7 @@ class ItemServiceImplTest {
 
     @Test
     void serchEmpty() {
-        List<Item> items = itemService.search(" ", 0, 10);
+        List<ItemDtoGet> items = itemService.search(" ", 0, 10);
         assertEquals(items.size(), 0);
         verify(itemRepository, never()).findItemsByText(anyString(), any(Pageable.class));
     }

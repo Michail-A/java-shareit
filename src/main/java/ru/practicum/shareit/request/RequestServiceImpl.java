@@ -42,7 +42,7 @@ public class RequestServiceImpl implements RequestService {
 
 
         List<Request> requests = requestRepository.findByRequesterIdOrderByCreatedDesc(requesterId);
-        List<Item> items = itemRepository.findByRequesterId(requesterId);
+        List<Item> items = itemRepository.findByRequestRequesterIdOrderByIdDesc(requesterId);
 
         return getRequestsDto(requests, items);
     }
@@ -54,7 +54,7 @@ public class RequestServiceImpl implements RequestService {
 
         Page<Request> requests = requestRepository
                 .findByRequesterIdNotOrderByCreatedDesc(userId, PageRequest.of(from, size));
-        List<Item> items = itemRepository.findAll();
+        List<Item> items = itemRepository.findAllByRequestIsNotNull();
 
         return getRequestsDto(requests.getContent(), items);
     }
@@ -80,7 +80,6 @@ public class RequestServiceImpl implements RequestService {
 
     public static List<GetRequestDto> getRequestsDto(List<Request> requests, List<Item> items) {
         List<GetRequestDto> getRequestsDto = new ArrayList<>();
-
         for (Request request : requests) {
             List<RequestDtoItemGet> itemsForRequest = new ArrayList<>();
             if (!items.isEmpty()) {

@@ -98,7 +98,7 @@ class RequestServiceImplTest {
     void getRequestsByOwner() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(requestRepository.findByRequesterIdOrderByCreatedDesc(anyInt())).thenReturn(List.of(request));
-        when(itemRepository.findByRequesterId(anyInt())).thenReturn(List.of(item));
+        when(itemRepository.findByRequestRequesterIdOrderByIdDesc(anyInt())).thenReturn(List.of(item));
 
         List<GetRequestDto> getRequestDtos = requestService.getRequestsByOwner(user.getId());
         assertEquals(getRequestDtos.get(0), RequestMapper.mapToGetRequestDto(request));
@@ -118,7 +118,7 @@ class RequestServiceImplTest {
         Page<Request> requests = new PageImpl<>(List.of(request2));
         when(requestRepository.findByRequesterIdNotOrderByCreatedDesc(anyInt(), any(Pageable.class)))
                 .thenReturn(requests);
-        when(itemRepository.findAll()).thenReturn(List.of());
+        when(itemRepository.findAllByRequestIsNotNull()).thenReturn(List.of());
 
         List<GetRequestDto> getRequestDtos = requestService.getAllRequests(0, 10, user.getId());
         assertEquals(getRequestDtos.get(0), RequestMapper.mapToGetRequestDto(requests.getContent().get(0)));

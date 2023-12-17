@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(exclude = {"description", "created", "requester"})
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

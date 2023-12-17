@@ -115,9 +115,7 @@ public class BookingServiceImpl implements BookingService {
 
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookings;
-        if (from < 0 || size < 0) {
-            throw new DateException("Страница не найдена");
-        }
+
         switch (state) {
             case ALL:
                 bookings = bookingRepository
@@ -162,10 +160,6 @@ public class BookingServiceImpl implements BookingService {
 
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookings;
-
-        if (from < 0 || size < 0) {
-            throw new DateException("Страница не найдена");
-        }
 
         switch (state) {
             case ALL:

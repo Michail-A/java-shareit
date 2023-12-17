@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"start", "end", "item", "booker", "status"})
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

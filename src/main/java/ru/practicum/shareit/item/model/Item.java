@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(exclude = {"name", "description", "available", "owner", "request"})
 public class Item {
 
     @Id
