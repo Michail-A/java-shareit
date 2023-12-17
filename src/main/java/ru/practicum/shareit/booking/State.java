@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import ru.practicum.shareit.error.UnknowStateException;
-
 public enum State {
     ALL,
     CURRENT,
@@ -14,7 +12,7 @@ public enum State {
         try {
             return State.valueOf(stateText.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new UnknowStateException("Unknown state: " + stateText.toUpperCase());
+            throw new IllegalArgumentException("Unknown state: " + stateText.toUpperCase());
         }
     }
 }
