@@ -17,5 +17,6 @@ public class ItemDtoGet {
     private Boolean available;
     private ItemBookingDtoGet lastBooking;
     private ItemBookingDtoGet nextBooking;
+    private Integer requestId;
     private List<CommentDtoGet> comments;
 }

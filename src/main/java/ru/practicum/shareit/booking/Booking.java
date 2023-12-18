@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(exclude = {"start", "end", "item", "booker", "status"})
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

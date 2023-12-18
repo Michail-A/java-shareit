@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoGet;
@@ -106,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoGet> getForUser(String stateText, int userId) {
+    public List<BookingDtoGet> getForUser(String stateText, int userId, int from, int size) {
         userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 
@@ -117,22 +118,28 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByBookerIdOrderByIdDesc(userId);
+                bookings = bookingRepository
+                        .findByBookerIdOrderByIdDesc(userId, PageRequest.of(from / size, size)).getContent();
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByBookerCurrent(userId, currentTime);
+                bookings = bookingRepository
+                        .findByBookerCurrent(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case PAST:
-                bookings = bookingRepository.findByBookerPast(userId, currentTime);
+                bookings = bookingRepository
+                        .findByBookerPast(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByBookerFuture(userId, currentTime);
+                bookings = bookingRepository
+                        .findByBookerFuture(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case WAITING:
-                bookings = bookingRepository.findByBookerWaiting(userId, Status.WAITING);
+                bookings = bookingRepository
+                        .findByBookerWaiting(userId, Status.WAITING, PageRequest.of(from / size, size)).getContent();
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByBookerRejected(userId, Status.REJECTED);
+                bookings = bookingRepository
+                        .findByBookerRejected(userId, Status.REJECTED, PageRequest.of(from / size, size)).getContent();
                 break;
             default:
                 bookings = Collections.emptyList();
@@ -145,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoGet> getBookingsForOwner(String stateText, int userId) {
+    public List<BookingDtoGet> getBookingsForOwner(String stateText, int userId, int from, int size) {
         userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден"));
 
@@ -156,22 +163,28 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByOwnerAll(userId);
+                bookings = bookingRepository
+                        .findByOwnerAll(userId, PageRequest.of(from / size, size)).getContent();
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByOwnerCurrent(userId, currentTime);
+                bookings = bookingRepository
+                        .findByOwnerCurrent(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case PAST:
-                bookings = bookingRepository.findByOwnerPast(userId, currentTime);
+                bookings = bookingRepository
+                        .findByOwnerPast(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByOwnerFuture(userId, currentTime);
+                bookings = bookingRepository
+                        .findByOwnerFuture(userId, currentTime, PageRequest.of(from / size, size)).getContent();
                 break;
             case WAITING:
-                bookings = bookingRepository.findByOwnerWaiting(userId, Status.WAITING);
+                bookings = bookingRepository
+                        .findByOwnerWaiting(userId, Status.WAITING, PageRequest.of(from / size, size)).getContent();
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByOwnerRejected(userId, Status.REJECTED);
+                bookings = bookingRepository
+                        .findByOwnerRejected(userId, Status.REJECTED, PageRequest.of(from / size, size)).getContent();
                 break;
             default:
                 bookings = Collections.emptyList();

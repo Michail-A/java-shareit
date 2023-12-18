@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemMapper {
@@ -25,8 +26,12 @@ public class ItemMapper {
 
     public static ItemDtoGet mapToGetItemDtoBooking(Item item, ItemBookingDtoGet lastBooking,
                                                     ItemBookingDtoGet nextBooking, List<CommentDtoGet> comments) {
-        return new ItemDtoGet(item.getId(), item.getName(), item.getDescription(),
-                item.isAvailable(), lastBooking, nextBooking, comments);
+        ItemDtoGet itemDtoGet = new ItemDtoGet(item.getId(), item.getName(), item.getDescription(),
+                item.isAvailable(), lastBooking, nextBooking, null, comments);
+        if (item.getRequest() != null) {
+            itemDtoGet.setRequestId(item.getRequest().getId());
+        }
+        return itemDtoGet;
     }
 
     public static Comment mapToNewComment(CommentDtoAdd commentDtoAdd, Item item, User author) {
@@ -41,5 +46,29 @@ public class ItemMapper {
 
     public static CommentDtoGet mapToCommentDtoGet(Comment comment) {
         return new CommentDtoGet(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
+    }
+
+    public static RequestDtoItemGet mapToRequestDtoItemGet(Item item) {
+        RequestDtoItemGet requestDtoItemGet = new RequestDtoItemGet();
+        requestDtoItemGet.setId(item.getId());
+        requestDtoItemGet.setName(item.getName());
+        requestDtoItemGet.setDescription(item.getDescription());
+        requestDtoItemGet.setAvailable(item.isAvailable());
+        if (item.getRequest() != null) {
+            requestDtoItemGet.setRequestId(item.getRequest().getId());
+        }
+        return requestDtoItemGet;
+    }
+
+    public static ItemDtoGet mapToGetItemDto(Item item) {
+        ItemDtoGet itemDtoGet = new ItemDtoGet(item.getId(),
+                item.getName(), item.getDescription(),
+                item.isAvailable(), new ItemBookingDtoGet(),
+                new ItemBookingDtoGet(), null,
+                new ArrayList<>());
+        if (item.getRequest() != null) {
+            itemDtoGet.setRequestId(item.getRequest().getId());
+        }
+        return itemDtoGet;
     }
 }
