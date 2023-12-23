@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.dto;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 
 

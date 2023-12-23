@@ -32,8 +32,8 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@RequestParam(defaultValue = "0") @Min(0) int from,
-                                              @RequestParam(defaultValue = "20") @Min(1) @Max(20) int size,
-                                              @RequestHeader(id) int userId) {
+                                                 @RequestParam(defaultValue = "20") @Min(1) @Max(20) int size,
+                                                 @RequestHeader(id) int userId) {
         return client.getAllRequests(from, size, userId);
     }
 

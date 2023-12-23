@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.client.BaseClient;
 
 import java.util.Map;
+
 @Service
 public class BookingClient extends BaseClient {
 
@@ -26,19 +27,19 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createBooking(BookingDto bookingDto, int userId){
+    public ResponseEntity<Object> createBooking(BookingDto bookingDto, int userId) {
         return post("", userId, bookingDto);
     }
 
-    public ResponseEntity<Object> setApprove(int userId, int bookingId, Boolean approved){
+    public ResponseEntity<Object> setApprove(int userId, int bookingId, Boolean approved) {
         return patch("/" + bookingId + "?approved=" + approved.toString(), userId);
     }
 
-    public ResponseEntity<Object> getForOwnerOrBooker(int bookingId, int userId){
+    public ResponseEntity<Object> getForOwnerOrBooker(int bookingId, int userId) {
         return get("/" + bookingId, userId);
     }
 
-    public ResponseEntity<Object> getForUser(int userId, String state, int from, int size){
+    public ResponseEntity<Object> getForUser(int userId, String state, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "state", state,
                 "from", from,
@@ -47,7 +48,7 @@ public class BookingClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", (long) userId, parameters);
     }
 
-    public ResponseEntity<Object> getBookingsForOwner(int userId, String state, int from, int size){
+    public ResponseEntity<Object> getBookingsForOwner(int userId, String state, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "state", state,
                 "from", from,

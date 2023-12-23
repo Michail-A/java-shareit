@@ -29,7 +29,7 @@ public class RequestController {
     }
 
     @GetMapping("/all")
-    public List<GetRequestDto> getAllRequests(@RequestParam(defaultValue = "0")  int from,
+    public List<GetRequestDto> getAllRequests(@RequestParam(defaultValue = "0") int from,
                                               @RequestParam(defaultValue = "20") int size,
                                               @RequestHeader(id) int userId) {
         return requestService.getAllRequests(from, size, userId);
