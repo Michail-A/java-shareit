@@ -16,8 +16,12 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -80,17 +84,25 @@ public class RequestServiceImpl implements RequestService {
 
     public static List<GetRequestDto> getRequestsDto(List<Request> requests, List<Item> items) {
         List<GetRequestDto> getRequestsDto = new ArrayList<>();
+        Map<Request, List<Item>> itemsForRequest = new HashMap<>();
+
+        if (!items.isEmpty()) {
+            itemsForRequest = items
+                    .stream()
+                    .collect(groupingBy(item -> item.getRequest()));
+        }
         for (Request request : requests) {
-            List<RequestDtoItemGet> itemsForRequest = new ArrayList<>();
-            if (!items.isEmpty()) {
-                itemsForRequest
-                        .addAll(items.stream()
-                                .filter(item -> item.getRequest() != null && item.getRequest().equals(request))
-                                .map(ItemMapper::mapToRequestDtoItemGet)
-                                .collect(Collectors.toList()));
-            }
             GetRequestDto getRequest = RequestMapper.mapToGetRequestDto(request);
-            getRequest.setItems(itemsForRequest);
+            List<RequestDtoItemGet> requestDtoItemGets = new ArrayList<>();
+
+            if (itemsForRequest.get(request) != null && !itemsForRequest.get(request).isEmpty()) {
+                requestDtoItemGets.addAll(itemsForRequest.get(request)
+                        .stream()
+                        .map(ItemMapper::mapToRequestDtoItemGet)
+                        .collect(Collectors.toList()));
+                getRequest.setItems(requestDtoItemGets);
+            }
+
             getRequestsDto.add(getRequest);
         }
         return getRequestsDto;
