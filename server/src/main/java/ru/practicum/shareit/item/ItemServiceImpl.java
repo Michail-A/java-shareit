@@ -136,7 +136,7 @@ public class ItemServiceImpl implements ItemService {
                     BookingMapper.mapToItemBookingDtoGet(setNextBooking(bookings, item)), commentsDtoGet));
 
         }
-
+        itemsWithBookings.sort(Comparator.comparing(ItemDtoGet::getId));
         return itemsWithBookings;
     }
 
