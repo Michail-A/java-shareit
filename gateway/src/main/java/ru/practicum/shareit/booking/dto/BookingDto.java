@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingDto {
     @NotNull
-    private int itemId;
+    private Integer itemId;
     @NotNull
     @FutureOrPresent
     private LocalDateTime start;
