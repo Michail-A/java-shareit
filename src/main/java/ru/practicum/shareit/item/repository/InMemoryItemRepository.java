@@ -11,26 +11,23 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ItemRepositoryImpl implements ItemRepository {
+public class InMemoryItemRepository implements ItemRepository {
 
     private final Map<Integer, Item> items = new HashMap<>();
 
     private int id = 1;
 
     @Override
-    public Optional<Item> add(Item item) {
+    public Item add(Item item) {
         item.setId(id);
         items.put(id, item);
         id++;
-        return Optional.of(item);
+        return item;
     }
 
     @Override
     public Optional<Item> get(int id) {
-        if (!items.containsKey(id)) {
-            return Optional.empty();
-        }
-        return Optional.of(items.get(id));
+        return Optional.ofNullable(items.get(id));
     }
 
     @Override

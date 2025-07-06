@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.error.EmailAlreadyExists;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -10,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class InMemoryUserRepository implements UserRepository {
 
     private final Map<Integer, User> users = new HashMap<>();
 
@@ -21,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> add(User user) {
         if (emails.containsKey(user.getEmail())) {
-            throw new EmailAlreadyExists("email: " + user.getEmail() + " уже используется");
+            return Optional.empty();
         }
         user.setId(id);
         users.put(id, user);
@@ -32,23 +31,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> get(int id) {
-        if (!users.containsKey(id)) {
-            return Optional.empty();
-        }
-        return Optional.of(users.get(id));
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
     public Optional<User> update(int id, UpdateUserDto user) {
         User updatedUser = users.get(id);
-        if (user.getName() != null) {
-            updatedUser.setName(user.getName());
-        }
         if (user.getEmail() != null) {
             if (emails.containsKey(user.getEmail())) {
-                throw new EmailAlreadyExists("email: " + user.getEmail() + " уже используется");
+                return Optional.empty();
             }
             updatedUser.setEmail(user.getEmail());
+        }
+        if (user.getName() != null) {
+            updatedUser.setName(user.getName());
         }
         return Optional.of(updatedUser);
     }

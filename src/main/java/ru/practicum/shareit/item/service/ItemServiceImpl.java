@@ -29,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.get(userId).orElseThrow(()
                 -> new NotFoundException("userId=" + userId + " не найден"));
         item.setOwner(user);
-        return ItemMapper.toItemDto(itemRepository.add(item).get());
+        return ItemMapper.toItemDto(itemRepository.add(item));
     }
 
     @Override
@@ -45,8 +45,8 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.get(itemId).orElseThrow(()
                 -> new NotFoundException("itemId=" + itemId + " не найден"));
         if (item.getOwner().getId() != userId) {
-            throw new NotAccessException("Ошибка доступа: вещь id = " + itemId + " не принадлежит userId="
-                    + item.getOwner().getId());
+            throw new NotAccessException("Ошибка доступа: вещь id={0} не принадлежит userId={1}"
+                    .formatted(itemId, userId));
         }
         if (updateItemDto.getName() != null) {
             item.setName(updateItemDto.getName());
