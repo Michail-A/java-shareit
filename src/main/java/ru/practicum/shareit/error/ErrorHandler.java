@@ -27,7 +27,8 @@ public class ErrorHandler {
         return Map.of("error", e.getMessage());
     }
 
-    @ExceptionHandler({NotAccessException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({NotAccessException.class, MethodArgumentNotValidException.class,
+            DateException.class, ItemIsNotAvailableException.class, CommentAccessException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleBadRequest(final Exception e) {
         log.error(e.getMessage());

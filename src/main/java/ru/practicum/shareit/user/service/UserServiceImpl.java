@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.EmailAlreadyExists;
 import ru.practicum.shareit.error.NotFoundException;
@@ -18,28 +19,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(User user) {
-        return UserMapper.toUserDto(repository.add(user).orElseThrow(() -> new EmailAlreadyExists("email"
-                + user.getEmail() + " уже используется")));
+        return UserMapper.toUserDto(repository.save(user));
     }
 
     @Override
     public UserDto get(int id) {
-        return UserMapper.toUserDto(repository.get(id).orElseThrow(()
+        return UserMapper.toUserDto(repository.findById(id).orElseThrow(()
                 -> new NotFoundException("Пользователя с id = " + id + " не существует")));
     }
 
     @Override
-    public UserDto update(int id, UpdateUserDto user) {
-        repository.get(id).orElseThrow(()
+    public UserDto update(int id, UpdateUserDto newUser) {
+        User user = repository.findById(id).orElseThrow(()
                 -> new NotFoundException("Пользователя с id = " + id + " не существует"));
-        return UserMapper.toUserDto(repository.update(id, user).orElseThrow(() -> new EmailAlreadyExists("email"
-                + user.getEmail() + " уже используется")));
+        if (newUser.getName() != null && !newUser.getName().isBlank()) {
+            user.setName(newUser.getName());
+        }
+        if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
+            user.setEmail(newUser.getEmail());
+        }
+        try {
+            return UserMapper.toUserDto(repository.save(user));
+        } catch (DataIntegrityViolationException e) {
+            throw new EmailAlreadyExists("email=" + user.getEmail() + " уже есть");
+        }
     }
 
     @Override
     public void remove(int id) {
-        repository.get(id).orElseThrow(()
+        repository.findById(id).orElseThrow(()
                 -> new NotFoundException("Пользователя с id = " + id + " не существует"));
-        repository.remove(id);
+        repository.deleteById(id);
     }
 }
