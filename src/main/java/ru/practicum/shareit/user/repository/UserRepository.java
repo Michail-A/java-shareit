@@ -1,17 +1,8 @@
 package ru.practicum.shareit.user.repository;
 
-import ru.practicum.shareit.user.dto.UpdateUserDto;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Optional;
+public interface UserRepository extends JpaRepository<User, Integer> {
 
-public interface UserRepository {
-
-    Optional<User> add(User user);
-
-    Optional<User> get(int id);
-
-    Optional<User> update(int id, UpdateUserDto user);
-
-    void remove(int id);
 }
