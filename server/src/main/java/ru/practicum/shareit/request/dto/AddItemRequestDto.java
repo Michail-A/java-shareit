@@ -4,6 +4,6 @@ import lombok.Data;
 
 
 @Data
-public class AddRequestDto {
+public class AddItemRequestDto {
     private String description;
 }
