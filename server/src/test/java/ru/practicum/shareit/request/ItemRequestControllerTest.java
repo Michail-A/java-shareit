@@ -88,4 +88,4 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.id").value(getItemRequestDto.getId()));
         verify(itemRequestService, times(1)).getRequestById(anyInt(), anyInt());
     }
-} 
+}
