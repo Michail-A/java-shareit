@@ -11,12 +11,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.ShareItServer;
+import ru.practicum.shareit.error.EmailAlreadyExists;
+import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(classes = ShareItServer.class)
@@ -67,5 +71,27 @@ class UserServiceImplIntegrationTest {
         assertEquals(user.getId(), createdUser.getId());
         assertEquals(user.getName(), createdUser.getName());
         assertEquals(user.getEmail(), updatedUserDto.getEmail());
+    }
+
+    @Test
+    void shouldThrowEmailAlreadyExists() {
+        User user = User.builder()
+                .name("test2")
+                .email("test@mail.ru")
+                .build();
+        Exception exception = assertThrows(
+                EmailAlreadyExists.class,
+                () -> userService.add(user)
+        );
+        assertThat(exception.getMessage()).contains("email=test@mail.ru уже есть");
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionUserNotFound() {
+        Exception exception = assertThrows(
+                NotFoundException.class,
+                () -> userService.get(999)
+        );
+        assertThat(exception.getMessage()).contains("Пользователя с id = 999 не существует");
     }
 }

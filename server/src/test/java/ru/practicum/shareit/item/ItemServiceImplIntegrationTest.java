@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.error.CommentAccessException;
+import ru.practicum.shareit.item.comment.CommentDtoAdd;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoAdd;
 import ru.practicum.shareit.item.model.Item;
@@ -56,5 +58,23 @@ class ItemServiceImplIntegrationTest {
         assertEquals(getItem.getName(), item.getName());
         assertEquals(getItem.getDescription(), item.getDescription());
         assertEquals(getItem.getId(), item.getId());
+    }
+
+    @Test
+    void shouldThrowCommentAccessException() {
+        CommentDtoAdd commentDtoAdd = CommentDtoAdd.builder()
+                .text("Тестовый комментарий")
+                .build();
+        // Пользователь с id=2 не брал вещь в аренду
+        User anotherUser = User.builder()
+                .name("Другой пользователь")
+                .email("other@mail.ru")
+                .build();
+        userService.add(anotherUser);
+        Exception exception = org.junit.jupiter.api.Assertions.assertThrows(
+                CommentAccessException.class,
+                () -> itemService.addComment(1, 2, commentDtoAdd)
+        );
+        assertEquals("Пользователь 2не брал вещь 1 в аренду", exception.getMessage());
     }
 }
