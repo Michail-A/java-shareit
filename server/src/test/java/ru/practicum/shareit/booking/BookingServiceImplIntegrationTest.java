@@ -14,12 +14,14 @@ import ru.practicum.shareit.ShareItServer;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoAdd;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.error.DateException;
 import ru.practicum.shareit.error.ItemIsNotAvailableException;
 import ru.practicum.shareit.error.NotAccessException;
 import ru.practicum.shareit.error.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoAdd;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
@@ -287,5 +289,174 @@ class BookingServiceImplIntegrationTest {
                 () -> bookingService.get(3, 1)
         );
         assertThat(exception.getMessage()).contains("Ошибка доступа");
+    }
+
+    @Test
+    void addShouldThrowNotFoundExceptionIfItemNotFound() {
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(999)
+                .start(java.time.LocalDateTime.now().plusDays(1))
+                .end(java.time.LocalDateTime.now().plusDays(2))
+                .build();
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.add(bookingDtoAdd, 1));
+        assertEquals("Вещь не найдена", exception.getMessage());
+    }
+
+    @Test
+    void addShouldThrowNotFoundExceptionIfUserIsOwner() {
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(1)
+                .start(java.time.LocalDateTime.now().plusDays(1))
+                .end(java.time.LocalDateTime.now().plusDays(2))
+                .build();
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.add(bookingDtoAdd, 2));
+        assertEquals("Нельзя забронировать свою вещь", exception.getMessage());
+    }
+
+    @Test
+    void addShouldThrowItemIsNotAvailableExceptionIfDatesOverlap() {
+        ItemDtoAdd newItem = ItemDtoAdd.builder()
+                .name("item-olap")
+                .description("desc")
+                .available(true)
+                .build();
+        ItemDto createdItem = itemService.add(newItem, 2);
+        int newItemId = createdItem.getId();
+        BookingDtoAdd bookingDtoAdd1 = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(1))
+                .end(java.time.LocalDateTime.now().plusDays(3))
+                .build();
+        bookingService.add(bookingDtoAdd1, 1);
+        BookingDtoAdd bookingDtoAdd2 = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(2))
+                .end(java.time.LocalDateTime.now().plusDays(4))
+                .build();
+        Exception exception = assertThrows(ItemIsNotAvailableException.class, () -> bookingService.add(bookingDtoAdd2, 1));
+        assertEquals("Даты бронирования заняты", exception.getMessage());
+    }
+
+    @Test
+    void setApproveShouldReject() {
+        ItemDtoAdd newItem = ItemDtoAdd.builder()
+                .name("item-reject")
+                .description("desc")
+                .available(true)
+                .build();
+        ItemDto createdItem = itemService.add(newItem, 2);
+        int newItemId = createdItem.getId();
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(5))
+                .end(java.time.LocalDateTime.now().plusDays(6))
+                .build();
+        BookingDto booking = bookingService.add(bookingDtoAdd, 1);
+        BookingDto result = bookingService.setApprove(2, booking.getId(), false);
+        assertEquals(Status.REJECTED, result.getStatus());
+    }
+
+    @Test
+    void setApproveShouldThrowItemIsNotAvailableExceptionIfAlreadyApproved() {
+        ItemDtoAdd newItem = ItemDtoAdd.builder()
+                .name("item-approved")
+                .description("desc")
+                .available(true)
+                .build();
+        ItemDto createdItem = itemService.add(newItem, 2);
+        int newItemId = createdItem.getId();
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(10))
+                .end(java.time.LocalDateTime.now().plusDays(11))
+                .build();
+        BookingDto booking = bookingService.add(bookingDtoAdd, 1);
+        bookingService.setApprove(2, booking.getId(), true);
+        Exception exception = assertThrows(ItemIsNotAvailableException.class, () -> bookingService.setApprove(2, booking.getId(), true));
+        assertEquals("Бронирование уже подтверждено или отклонено", exception.getMessage());
+    }
+
+    @Test
+    void getShouldThrowNotFoundExceptionIfBookingNotFound() {
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.get(1, 999));
+        assertEquals("Бронирование id=999 не найдено", exception.getMessage());
+    }
+
+    @Test
+    void getShouldThrowNotFoundExceptionIfUserNotFound() {
+        ItemDtoAdd newItem = ItemDtoAdd.builder()
+                .name("item-unique-user-not-found-" + System.nanoTime())
+                .description("desc")
+                .available(true)
+                .build();
+        ItemDto createdItem = itemService.add(newItem, 2);
+        int newItemId = createdItem.getId();
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(10))
+                .end(java.time.LocalDateTime.now().plusDays(11))
+                .build();
+        BookingDto booking = bookingService.add(bookingDtoAdd, 1);
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.get(999, booking.getId()));
+        assertEquals("Пользователь не найден", exception.getMessage());
+    }
+
+    @Test
+    void getShouldThrowNotFoundExceptionIfNotOwnerOrBooker() {
+        ItemDtoAdd newItem = ItemDtoAdd.builder()
+                .name("item-unique-not-owner-or-booker-" + System.nanoTime())
+                .description("desc")
+                .available(true)
+                .build();
+        ItemDto createdItem = itemService.add(newItem, 2);
+        int newItemId = createdItem.getId();
+        BookingDtoAdd bookingDtoAdd = BookingDtoAdd.builder()
+                .itemId(newItemId)
+                .start(java.time.LocalDateTime.now().plusDays(20))
+                .end(java.time.LocalDateTime.now().plusDays(21))
+                .build();
+        BookingDto booking = bookingService.add(bookingDtoAdd, 1);
+        User user3 = User.builder().name("user3").email("user3@mail.ru").build();
+        userService.add(user3);
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.get(3, booking.getId()));
+        assertEquals("Ошибка доступа. Бронирование может посмотреть только владелец вещи или создатель", exception.getMessage());
+    }
+
+    @Test
+    void getForUserShouldThrowNotFoundExceptionIfUserNotFound() {
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.getForUser(999, "ALL"));
+        assertEquals("Пользователь не найден", exception.getMessage());
+    }
+
+    @Test
+    void getForOwnerShouldThrowNotFoundExceptionIfUserNotFound() {
+        Exception exception = assertThrows(NotFoundException.class, () -> bookingService.getForOwner(999, "ALL"));
+        assertEquals("Пользователь не найден", exception.getMessage());
+    }
+
+    @Test
+    void getForUserShouldReturnAllStates() {
+        for (State state : State.values()) {
+            bookingService.getForUser(1, state.name());
+        }
+    }
+
+    @Test
+    void getForOwnerShouldReturnAllStates() {
+        for (State state : State.values()) {
+            bookingService.getForOwner(2, state.name());
+        }
+    }
+
+    @Test
+    void getForUserShouldThrowExceptionForUnknownState() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bookingService.getForUser(1, "UNKNOWN"));
+        assertEquals("Unknown state: UNKNOWN", exception.getMessage());
+    }
+
+    @Test
+    void getForOwnerShouldThrowExceptionForUnknownState() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bookingService.getForOwner(2, "UNKNOWN"));
+        assertEquals("Unknown state: UNKNOWN", exception.getMessage());
     }
 }
