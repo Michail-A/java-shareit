@@ -10,9 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.comment.CommentDtoAdd;
 import ru.practicum.shareit.item.comment.CommentDtoGet;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoAdd;
-import ru.practicum.shareit.item.dto.UpdateItemDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -116,5 +114,28 @@ class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(commentDtoGet.getId()));
         verify(itemService, times(1)).addComment(anyInt(), anyInt(), any(CommentDtoAdd.class));
+    }
+
+    @Test
+    void getByOwner() throws Exception {
+        ItemBookingDtoGet bookingDtoGet = ItemBookingDtoGet.builder()
+                .id(1)
+                .bookerId(1)
+                .time(java.time.LocalDateTime.now())
+                .build();
+        ItemDtoOwners owners = ItemDtoOwners.builder()
+                .name("item")
+                .description("desc")
+                .lastBooking(bookingDtoGet)
+                .nextBooking(null)
+                .comments(List.of())
+                .build();
+        when(itemService.getByOwner(anyInt())).thenReturn(List.of(owners));
+        mockMvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].name").value("item"));
+        verify(itemService, times(1)).getByOwner(anyInt());
     }
 }
