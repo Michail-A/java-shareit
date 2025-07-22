@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemRequestController.class)
 class RequestControllerTest {
     @MockBean
-    ItemRequestService ItemRequestService;
+    ItemRequestService itemRequestService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -48,7 +48,7 @@ class RequestControllerTest {
 
     @Test
     void addRequest() throws Exception {
-        when(ItemRequestService.addRequest(ArgumentMatchers.any(AddItemRequestDto.class),
+        when(itemRequestService.addRequest(ArgumentMatchers.any(AddItemRequestDto.class),
                 anyInt())).thenReturn(getItemRequestDto);
 
         mockMvc.perform(post("/requests")
@@ -58,24 +58,24 @@ class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(getItemRequestDto.getId()));
 
-        verify(ItemRequestService, times(1)).addRequest(addItemRequestDto, 1);
+        verify(itemRequestService, times(1)).addRequest(addItemRequestDto, 1);
     }
 
     @Test
     void getRequestsByOwner() throws Exception {
-        when(ItemRequestService.getRequestsByOwner(anyInt())).thenReturn(List.of(getItemRequestDto));
+        when(itemRequestService.getRequestsByOwner(anyInt())).thenReturn(List.of(getItemRequestDto));
 
         mockMvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value(getItemRequestDto.getId()));
-        verify(ItemRequestService, times(1)).getRequestsByOwner(1);
+        verify(itemRequestService, times(1)).getRequestsByOwner(1);
     }
 
     @Test
     void getAllRequests() throws Exception {
-        when(ItemRequestService.getAllRequests(anyInt()))
+        when(itemRequestService.getAllRequests(anyInt()))
                 .thenReturn(List.of(getItemRequestDto));
 
         mockMvc.perform(get("/requests/all")
@@ -83,12 +83,12 @@ class RequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value(getItemRequestDto.getId()));
-        verify(ItemRequestService, times(1)).getAllRequests(anyInt());
+        verify(itemRequestService, times(1)).getAllRequests(anyInt());
     }
 
     @Test
     void getRequestById() throws Exception {
-        when(ItemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(getItemRequestDto);
+        when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(getItemRequestDto);
 
         mockMvc.perform(get("/requests/1")
                         .header("X-Sharer-User-Id", "1")
@@ -96,6 +96,6 @@ class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(getItemRequestDto.getId()))
                 .andExpect(jsonPath("$.description").value(getItemRequestDto.getDescription()));
-        verify(ItemRequestService, times(1)).getRequestById(anyInt(), anyInt());
+        verify(itemRequestService, times(1)).getRequestById(anyInt(), anyInt());
     }
 }
