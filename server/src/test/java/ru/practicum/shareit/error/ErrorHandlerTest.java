@@ -61,4 +61,4 @@ class ErrorHandlerTest {
         Map<String, String> response = errorHandler.handleBadRequest(ex);
         assertThat(response).containsEntry("error", "validation error");
     }
-} 
+}
