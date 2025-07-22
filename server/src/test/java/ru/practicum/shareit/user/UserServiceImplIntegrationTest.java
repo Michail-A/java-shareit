@@ -94,4 +94,34 @@ class UserServiceImplIntegrationTest {
         );
         assertThat(exception.getMessage()).contains("Пользователя с id = 999 не существует");
     }
+
+    @Test
+    void updateShouldThrowNotFoundException() {
+        UpdateUserDto updateUserDto = new UpdateUserDto();
+        updateUserDto.setName("no");
+        Exception exception = assertThrows(
+                NotFoundException.class,
+                () -> userService.update(999, updateUserDto)
+        );
+        assertThat(exception.getMessage()).contains("Пользователя с id = 999 не существует");
+    }
+
+    @Test
+    void removeShouldThrowNotFoundException() {
+        Exception exception = assertThrows(
+                NotFoundException.class,
+                () -> userService.remove(999)
+        );
+        assertThat(exception.getMessage()).contains("Пользователя с id = 999 не существует");
+    }
+
+    @Test
+    void removeActuallyDeletesUser() {
+        userService.remove(createdUser.getId());
+        Exception exception = assertThrows(
+                NotFoundException.class,
+                () -> userService.get(createdUser.getId())
+        );
+        assertThat(exception.getMessage()).contains("Пользователя с id = " + createdUser.getId() + " не существует");
+    }
 }

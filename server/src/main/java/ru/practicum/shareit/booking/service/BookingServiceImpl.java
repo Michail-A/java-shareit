@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,7 +128,6 @@ public class BookingServiceImpl implements BookingService {
                     .findByBookerWaiting(userId, Status.WAITING);
             case REJECTED -> bookingRepository
                     .findByBookerRejected(userId, Status.REJECTED);
-            default -> Collections.emptyList();
         };
 
         return bookings
@@ -146,7 +144,7 @@ public class BookingServiceImpl implements BookingService {
         State state = State.mapFromText(stateText);
 
         LocalDateTime currentTime = LocalDateTime.now();
-        List<Booking> bookings;
+        List<Booking> bookings = List.of();
 
         switch (state) {
             case ALL:
@@ -173,8 +171,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository
                         .findByOwnerRejected(userId, Status.REJECTED);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
 
         return bookings

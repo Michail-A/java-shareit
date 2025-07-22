@@ -66,9 +66,6 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> lastBooking = setLastBooking(bookings, item);
             Optional<Booking> nextBooking = setNextBooking(bookings, item);
 
-            LocalDateTime lastEnd = lastBooking.map(Booking::getEnd).orElse(null);
-            LocalDateTime nextStart = nextBooking.map(Booking::getStart).orElse(null);
-
             itemDtoGet.setLastBooking(
                     lastBooking.map(booking ->
                             ItemMapper.toItemBookingDtoGet(booking, booking.getEnd())
