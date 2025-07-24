@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +16,7 @@ public class UserController {
     private final UserClient client;
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
 
         return client.createUser(userDto);
     }

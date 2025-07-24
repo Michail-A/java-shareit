@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class BookingController {
     private static final String id = "X-Sharer-User-Id";
 
     @PostMapping
-    public ResponseEntity<Object> createBooking(@RequestBody BookingDto bookingDto, @RequestHeader(id) int userId) {
+    public ResponseEntity<Object> createBooking(@Valid @RequestBody BookingDto bookingDto, @RequestHeader(id) int userId) {
         return client.createBooking(bookingDto, userId);
     }
 
